@@ -1,0 +1,6 @@
+
+# compiled programs and object files
+main
+*.o
+*.out
+a.out

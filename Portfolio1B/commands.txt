@@ -1,0 +1,7 @@
+TYPE Hello
+TYPE World
+UNDO
+REDO
+DELETE 5
+UNDO
+
