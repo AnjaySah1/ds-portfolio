@@ -19,6 +19,8 @@ int main() {
 	std::cout << "Empty tree search(5): " << (empty.search(5) ? "true" : "false") << std::endl;
 	std::cout << "Empty tree inorder: ";
 	printVector(empty.inorder());
+	std::cout << "Empty tree size: " << empty.size()
+		  << ", height: " << empty.height() << std::endl;
 
 	// Test insert, search , and inorder with ints
 	BST<int> tree;
@@ -29,12 +31,21 @@ int main() {
 	std::cout << "Inorder after inserting 7 values: ";
 	printVector(tree.inorder());
 
-	//Test Level-order traversal.
+	//Test the other traversals.
+	std::cout << "Preorder traversal: ";
+	printVector(tree.preorder());
+
+	std::cout << "Postorder traversal: ";
+	printVector(tree.postorder());
+
 	std::cout << "Level Order traversal: ";
 	printVector(tree.levelorder());
 
+	// Test size and height.
+	std::cout << "size: " << tree.size() << ", height: " << tree.height() << std::endl;
+
 	std::cout << "search(40): " << (tree.search(40) ? "true" : "false") << std::endl;
-    std::cout << "search(50) (the root): " << (tree.search(50) ? "true" : "false") << std::endl;
+        std::cout << "search(50) (the root): " << (tree.search(50) ? "true" : "false") << std::endl;
 	std::cout << "search(99): " << (tree.search(99) ? "true" : "false") << std::endl;
 
 	// Inserting a duplicate should not change the tree
@@ -42,7 +53,7 @@ int main() {
 	std::cout << "Inorder after inserting duplicate 50: ";
 	printVector(tree.inorder());
 
-	// Test with strings to make make sure the template works for another type
+	// Test with strings to make sure the template works for another type
 	BST<std::string> words;
 	words.insert("pear");
 	words.insert("apple");
@@ -72,15 +83,12 @@ int main() {
 	BST<int> single;
 	single.insert(10);
 	single.remove(10);
-
-	std::cout << "Single-node tree size after removal: "
-		  << single.size() << std::endl;
+	std::cout << "Single-node tree size after removal: " << single.size() << std::endl;
 
 	BST<int> oneChild;
 	oneChild.insert(50);
 	oneChild.insert(30);
 	oneChild.insert(20);
-
 	oneChild.remove(30);
 
 	std::cout << "After removing node 30 with one child: ";
@@ -88,7 +96,48 @@ int main() {
 
 	std::cout << "Size after one child removal: " << oneChild.size() << std::endl;
 
+	//Test removal of a node with only a right child.
+	BST<int> rightChild;
+	rightChild.insert(50);
+	rightChild.insert(70);
+	rightChild.insert(80);
+	rightChild.remove(70);
+	std::cout << "After removing node 70  with only a right child: ";
+	printVector(rightChild.inorder());
 
+	//Rule of Three: copy constructor makes an independent deep copy.
+	BST<int> original;
+	for (int v : values) {
+		original.insert(v);
+	}
+
+	BST<int> copied(original);
+	copied.remove(50);
+	copied.insert(999);
+	std::cout << "Original after editing copy: ";
+	printVector(original.inorder());
+	std::cout << "Copy after edits: ";
+	printVector(copied.inorder());
+
+	//Rule of Three: copy assignment replaces the old contents.
+	BST<int> assigned;
+	assigned.insert(1);
+	assigned = original;
+	assigned.remove(30);
+	std::cout << "Assigned copy after removing 30: ";
+	printVector(assigned.inorder());
+	std::cout << "Original still: ";
+	printVector(original.inorder());
+
+	//Self-assignment must be safe(goes through a reference so that compilers do not warn about an obvious self-assign).
+	BST<int>& alias = original;
+	original = alias;
+	std::cout << "After self-assignment: ";
+	printVector(original.inorder());
+
+	//Copying an empty tree should also work.
+	BST<int> emptyCopy(empty);
+	std::cout << "Copy of empty tree size: " << emptyCopy.size() << std::endl;
 
 	return 0;
 }

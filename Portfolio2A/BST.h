@@ -7,6 +7,8 @@
 #include <queue>
 
 // Templated Binary search Tree. Only needs operator< on T.
+// Includes the Rule of Three (destructor, copy constructor, copy assignment) with a full recursive deep copy.
+
 
 template <typename T>
 class BST {
@@ -20,7 +22,7 @@ private:
 
      Node* root;
 
-     // Here it walks down the tree to find the right spot for value and returns the root of that subtree. If the value is already there, nothing changes, so duplicates are ignored.
+     // Here, walks down the tree to find the right spot for value and returns the root of that subtree. If the value is already there, nothing changes, so duplicates are ignored.
 
      Node* insertHelper(Node* node, const T& value)
      {
@@ -63,28 +65,40 @@ private:
 	delete node;
      }
 
+     // Builds a brand new copy of a subtree( copy node, then both children).
+     // The new tree shares no nodes with the original.
+
+      Node* copyHelper(const Node* node) const
+      {
+	if (node == nullptr) {
+		return nullptr;
+	}
+	Node* copy = new Node(node->value);
+	copy->left = copyHelper(node->left);
+	copy->right = copyHelper(node->right);
+	return copy;
+      }
+
     // Finds the smallest value in a subtree.
-	// The inorder successor is the leftmost node in the right subtree.
+    // The inorder successor is the leftmost node in the right subtree.
      Node* minNode(Node* node)
      {
-	while (node->left != nullptr)
-        {
+	while (node->left != nullptr) {
 		node = node->left;
 	}
 	return node;
      }
 
      // Removes a value from a subtree and returns the updated subtree root.
-     Node* removeHelper(Node* node, const T& value)  {
+     Node* removeHelper(Node* node, const T& value)
+     {
 	// Case: value is not in this subtree.
-	if (node == nullptr)
-	{
+	if (node == nullptr) {
 	    return nullptr;
 	}
 
 	// Search the left subtree.
-	if (value < node->value)
-	{
+	if (value < node->value) {
 		node->left = removeHelper(node->left, value);
 	}
 
@@ -95,43 +109,41 @@ private:
 	// The current node contains the value to remove.
 	else {
 		// Case 1: no children (leaf).
-		if (node->left == nullptr && node->right == nullptr)
-		{
+		if (node->left == nullptr && node->right == nullptr) {
 			delete node;
 			return nullptr;
 		}
 
 		// Case 2a: only a right child.
-		if (node->left == nullptr)
-		{
+		if (node->left == nullptr) {
 			Node* child = node->right;
 			delete node;
 			return child;
 		}
 
 		// Case 2b: only a left child.
-		if (node->right == nullptr)
-		{
+		if (node->right == nullptr) {
 			Node* child = node->left;
 			delete node;
 			return child;
 		}
 
 		//Case 3: two children.
-		// Replace this value with its inorder successor.
-		Node* successor = minNode(node->right);
-		node->value = successor->value;
+		// Replace this value with its inorder successor.The successor value is copied first so we never read it from a node that is about to be deleted.
+		T successorValue = minNode(node->right)->value;
+		node->value = successorValue;
 
 		//Remove the original successor node.
-		node->right = removeHelper(node->right, successor->value);
+		node->right = removeHelper(node->right, successorValue);
 	}
 	return node;
      }
 
 
-//First: Left then node then right (L N R): In a BST: inorder gives sorted order.
+     //Left then node then right (L N R): In a BST, inorder gives sorted order.
 
-     void inorderHelper(const Node* node, std::vector<T>& result) const {
+     void inorderHelper(const Node* node, std::vector<T>& result) const
+     {
 	if (node == nullptr) {
 	    return;
 	}
@@ -140,7 +152,7 @@ private:
 	inorderHelper(node->right, result);
      }
 
-// Counts this node plus everything in its left and right subtrees
+      // Counts this node plus everything in its left and right subtrees
       int sizeHelper(const Node* node) const
       {
 	if (node == nullptr)  {
@@ -149,21 +161,22 @@ private:
 	return 1 + sizeHelper(node->left) + sizeHelper(node->right);
       }
 
-// Height is the number of nodes on the longest path going down from here.
-	// An empty tree is 0 and a single node is 1.
+      // Height is the number of nodes on the longest path going down from here.
+      // An empty tree is 0 and a single node is 1.
 
        int heightHelper(const Node* node) const
        {
-	if (node == nullptr) {
+       	 if (node == nullptr) {
 		return 0;
-	}
-	int leftHeight = heightHelper(node->left);
-	int rightHeight = heightHelper(node->right);
-	return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
-       }
+	 }
+	 int leftHeight = heightHelper(node->left);
+	 int rightHeight = heightHelper(node->right);
+	 return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
+        }
 
-	// Node first then left then right ( N L R): PreOrder
-	void preorderHelper(const Node* node, std::vector<T>& result) const {
+	//PreOrder: Node first then left then right ( N L R).
+	void preorderHelper(const Node* node, std::vector<T>& result) const
+	{
 		if (node== nullptr)  {
 			return;
 		}
@@ -173,7 +186,8 @@ private:
 	}
 
 	//Postorder: Left then right then node last ( L R N)
-	void postorderHelper (const Node* node, std::vector<T>& result) const {
+	void postorderHelper (const Node* node, std::vector<T>& result) const
+	{
 		if (node == nullptr)  {
 			return;
 		}
@@ -185,52 +199,75 @@ private:
 public:
      BST() : root(nullptr) {}
 
-//Destructor frees every node so there are no memory leaks
+    //Rule of Three,Part 1: destructor frees every node so there are no memory leaks
      ~BST() {
 	destroyHelper(root);
      }
 
-     void insert(const T& value)  {
-	root = insertHelper(root, value);
-     }
+     // Rule of Three , Part 2: copy constructor makes a full deep copy.
+     BST(const BST& other) : root(copyHelper(other.root))  {}
 
-     bool search(const T& value) const {
-	return searchHelper(root, value);
-     }
-
-     void remove(const T& value)
+     // Rule of Three, Part 3: copy assignment. The copy is built first and the old tree is freed afterwards, and self assignment is safe.
+     BST& operator=(const BST& other)
      {
-	root = removeHelper(root, value);
-     }
-// Returns all the values in sorted order (using inorder)
+	if (this != &other)  {
+		Node* newRoot = copyHelper(other.root);
+		destroyHelper(root);
+		root = newRoot;
+	}
+	return *this;
+      }
 
-     std::vector<T> inorder() const {
+      void insert(const T& value)
+      {
+	root = insertHelper(root, value);
+      }
+
+      bool search(const T& value) const
+      {
+	return searchHelper(root, value);
+      }
+
+      void remove(const T& value)
+      {
+	root = removeHelper(root, value);
+      }
+
+      // Returns all the values in sorted order (using inorder)
+
+      std::vector<T> inorder() const
+      {
 	std::vector<T> result;
 	inorderHelper(root, result);
 	return result;
-     }
-     int size() const {
+      }
+      int size() const
+      {
 	return sizeHelper(root);
-     }
+      }
 
-     int height() const {
+      int height() const
+      {
 	return heightHelper(root);
-     }
+      }
 
-     std::vector<T> preorder() const {
+      std::vector<T> preorder() const
+      {
 	std::vector<T> result;
 	preorderHelper(root, result);
 	return result;
-     }
+      }
 
-     std::vector<T> postorder() const {
+      std::vector<T> postorder() const
+      {
 	std::vector<T> result;
 	postorderHelper(root, result);
 	return result;
-     }
+      }
 
-     std::vector<T> levelorder() const
-     {
+      // Level by level, left to right , using a queue.
+      std::vector<T> levelorder() const
+      {
 	std::vector<T> result;
 
 	if (root == nullptr)

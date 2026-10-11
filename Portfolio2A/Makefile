@@ -1,4 +1,4 @@
-CXX	= g++
+CXX	 = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -g
 TARGET   = main
 SRCS     = main.cpp
@@ -14,6 +14,3 @@ clean:
 	rm -f $(TARGET)
 
 .PHONY: run clean
-
-
-
