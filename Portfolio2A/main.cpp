@@ -1,4 +1,3 @@
-
 #include "BST.h"
 #include <iostream>
 #include <string>
@@ -30,6 +29,10 @@ int main() {
 	std::cout << "Inorder after inserting 7 values: ";
 	printVector(tree.inorder());
 
+	//Test Level-order traversal.
+	std::cout << "Level Order traversal: ";
+	printVector(tree.levelorder());
+
 	std::cout << "search(40): " << (tree.search(40) ? "true" : "false") << std::endl;
     std::cout << "search(50) (the root): " << (tree.search(50) ? "true" : "false") << std::endl;
 	std::cout << "search(99): " << (tree.search(99) ? "true" : "false") << std::endl;
@@ -50,6 +53,42 @@ int main() {
 	std::cout << "search(\"mango\"): " << (words.search("mango") ? "true" : "false") << std::endl;
 	std::cout << "search(\"kiwi\"): " << (words.search("kiwi") ? "true" : "false") << std::endl;
 
+	// Test removal of a leaf node.
+	tree.remove(20);
+	std::cout << "After removing leaf 20: ";
+	printVector(tree.inorder());
+
+	// Test removal of a node with two children.
+	tree.remove(50);
+	std::cout << "After remove node 50: ";
+	printVector(tree.inorder());
+
+	//Test removal of a missing value.
+	tree.remove(999);
+        std::cout << "After removing missing value: ";
+        printVector(tree.inorder());
+
+	// Test removal of the root from a single-node tree.
+	BST<int> single;
+	single.insert(10);
+	single.remove(10);
+
+	std::cout << "Single-node tree size after removal: "
+		  << single.size() << std::endl;
+
+	BST<int> oneChild;
+	oneChild.insert(50);
+	oneChild.insert(30);
+	oneChild.insert(20);
+
+	oneChild.remove(30);
+
+	std::cout << "After removing node 30 with one child: ";
+	printVector(oneChild.inorder());
+
+	std::cout << "Size after one child removal: " << oneChild.size() << std::endl;
+
+
+
 	return 0;
 }
-
