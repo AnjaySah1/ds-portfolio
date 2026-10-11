@@ -37,7 +37,7 @@ private:
         return node;
      }
 
-// Goes left if value is smaller, right if it is bigger. If we hit nullptr the value is not in the  tree. If neither < works, then it's equal.
+// Goes left if value is smaller, right if it is bigger. If we hit nullptr the value is not in the tree. If neither < works, then it's equal.
 
      bool searchHelper(const Node* node, const T& value) const
      {
@@ -65,7 +65,7 @@ private:
         delete node;
      }
 
-     // Builds a brand new copy of a subtree( copy node, then both children).
+     // Builds a brand new copy of a subtree (copy node, then both children).
      // The new tree shares no nodes with the original.
 
       Node* copyHelper(const Node* node) const
@@ -129,7 +129,7 @@ private:
                 }
 
                 //Case 3: two children.
-                // Replace this value with its inorder successor.The successor value is copied first so we never read it from a node that is about to be deleted.
+                // Replace this value with its inorder successor. The successor value is copied first so we never read it from a node that is about to be deleted.
                 T successorValue = minNode(node->right)->value;
                 node->value = successorValue;
 
@@ -199,12 +199,12 @@ private:
 public:
      BST() : root(nullptr) {}
 
-    //Rule of Three,Part 1: destructor frees every node so there are no memory leaks
+    //Rule of Three, Part 1: destructor frees every node so there are no memory leaks
      ~BST() {
         destroyHelper(root);
      }
 
-     // Rule of Three , Part 2: copy constructor makes a full deep copy.
+     // Rule of Three, Part 2: copy constructor makes a full deep copy.
      BST(const BST& other) : root(copyHelper(other.root))  {}
 
      // Rule of Three, Part 3: copy assignment. The copy is built first and the old tree is freed afterwards, and self assignment is safe.
@@ -265,7 +265,7 @@ public:
         return result;
       }
 
-      // Level by level, left to right , using a queue.
+      // Level by level, left to right, using a queue.
       std::vector<T> levelorder() const
       {
         std::vector<T> result;
