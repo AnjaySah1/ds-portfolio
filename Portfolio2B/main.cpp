@@ -70,6 +70,34 @@ void handleCount(const BST<Contact>& directory)
     std::cout << "Contacts: " << directory.size() << ", tree height: " << directory.height() << std::endl;
 }
 
+// Gets every contact with this exact last name. The tree is sorted by last name first, so all of them are next to each other.
+
+std::vector<Contact> findByLastName(const BST<Contact>& directory, const std::string& lastName)
+{
+    return directory.collect([&lastName](const Contact& c) {
+        return c.lastName.compare(lastName);
+    });
+}
+
+// Looks up a last name and prints every contact that has it.
+void handleLookup(const BST<Contact>& directory, std::istringstream& args)
+{
+    std::string last, extra;
+    if (!(args >> last) || (args >> extra)) {
+        std::cout << "Usage: LOOKUP <last>" << std::endl;
+        return;
+    }
+
+    std::vector<Contact> matches = findByLastName(directory, last);
+    if (matches.empty()) {
+        std::cout << "Not found: no contact with last name " << last << std::endl;
+        return;
+    }
+    std::cout << "Found " << matches.size() << " contact(s) with last name " << last << ":" << std::endl;
+    printContacts(matches);
+}
+
+
 int main()
 {
     BST<Contact> directory;
@@ -104,6 +132,8 @@ int main()
 
         if (command == "ADD") {
             handleAdd(directory, args);
+        } else if (command == "LOOKUP") {
+            handleLookup(directory, args);
         } else if (command == "LIST") {
             handleList(directory);
         } else if (command == "COUNT") {
