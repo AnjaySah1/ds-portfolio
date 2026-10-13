@@ -1,0 +1,118 @@
+> LIST
+The directory is empty.
+> COUNT
+Contacts: 0, tree height: 0
+> LOOKUP Smith
+Not found: no contact with last name Smith
+> DELETE Smith
+Not found: nothing to delete for Smith
+> PREFIX S
+No last names start with S
+> ADD Anjay Sah 276-0001
+Added: Sah, Anjay 276-0001
+> ADD Rohit Sah 276-0002
+Added: Sah, Rohit 276-0002
+> ADD Uday Neupane 276-0003
+Added: Neupane, Uday 276-0003
+> ADD Alina Chaudhary 276-0004
+Added: Chaudhary, Alina 276-0004
+> ADD Trilok Yadav 276-0005
+Added: Yadav, Trilok 276-0005
+> ADD Deepak Yadav 276-0006
+Added: Yadav, Deepak 276-0006
+> ADD Logan Farmer 276-0007
+Added: Farmer, Logan 276-0007
+> ADD Santosh Sah 276-0008
+Added: Sah, Santosh 276-0008
+> ADD Kiran Bhandari 276-0009
+Added: Bhandari, Kiran 276-0009
+> LIST
+  Bhandari, Kiran 276-0009
+  Chaudhary, Alina 276-0004
+  Farmer, Logan 276-0007
+  Neupane, Uday 276-0003
+  Sah, Anjay 276-0001
+  Sah, Rohit 276-0002
+  Sah, Santosh 276-0008
+  Yadav, Deepak 276-0006
+  Yadav, Trilok 276-0005
+> COUNT
+Contacts: 9, tree height: 5
+> ADD Anjay Sah 977-9825
+Already in the directory: Sah, Anjay (not added)
+> LOOKUP Sah
+Found 3 contact(s) with last name Sah:
+  Sah, Anjay 276-0001
+  Sah, Rohit 276-0002
+  Sah, Santosh 276-0008
+> LOOKUP Yadav
+Found 2 contact(s) with last name Yadav:
+  Yadav, Deepak 276-0006
+  Yadav, Trilok 276-0005
+> LOOKUP Nobody
+Not found: no contact with last name Nobody
+> PREFIX S
+3 contact(s) with last name starting with S:
+  Sah, Anjay 276-0001
+  Sah, Rohit 276-0002
+  Sah, Santosh 276-0008
+> PREFIX Ya
+2 contact(s) with last name starting with Ya:
+  Yadav, Deepak 276-0006
+  Yadav, Trilok 276-0005
+> PREFIX Q
+No last names start with Q
+> ADD OnlyTwo Args
+Usage: ADD <first> <last> <phone>
+> LOOKUP
+Usage: LOOKUP <last>
+> FOO
+Unknown command: FOO
+> DELETE Chaudhary
+Deleted: Chaudhary, Alina 276-0004
+> LIST
+  Bhandari, Kiran 276-0009
+  Farmer, Logan 276-0007
+  Neupane, Uday 276-0003
+  Sah, Anjay 276-0001
+  Sah, Rohit 276-0002
+  Sah, Santosh 276-0008
+  Yadav, Deepak 276-0006
+  Yadav, Trilok 276-0005
+> DELETE Bhandari
+Deleted: Bhandari, Kiran 276-0009
+> LIST
+  Farmer, Logan 276-0007
+  Neupane, Uday 276-0003
+  Sah, Anjay 276-0001
+  Sah, Rohit 276-0002
+  Sah, Santosh 276-0008
+  Yadav, Deepak 276-0006
+  Yadav, Trilok 276-0005
+> DELETE Neupane
+Deleted: Neupane, Uday 276-0003
+> LIST
+  Farmer, Logan 276-0007
+  Sah, Anjay 276-0001
+  Sah, Rohit 276-0002
+  Sah, Santosh 276-0008
+  Yadav, Deepak 276-0006
+  Yadav, Trilok 276-0005
+> COUNT
+Contacts: 6, tree height: 5
+> DELETE Sah Rohit
+Deleted: Sah, Rohit 276-0002
+> DELETE Sah Zed
+Not found: nothing to delete for Sah
+> DELETE Nobody
+Not found: nothing to delete for Nobody
+> DELETE Sah
+Deleted: Sah, Anjay 276-0001
+Deleted: Sah, Santosh 276-0008
+> LIST
+  Farmer, Logan 276-0007
+  Yadav, Deepak 276-0006
+  Yadav, Trilok 276-0005
+> COUNT
+Contacts: 3, tree height: 2
+> QUIT

@@ -1,0 +1,55 @@
+# Empty tree
+LIST
+COUNT
+LOOKUP Smith
+DELETE Smith
+PREFIX S
+
+# Build a tree
+ADD Anjay Sah 276-0001
+ADD Rohit Sah 276-0002
+ADD Uday Neupane 276-0003
+ADD Alina Chaudhary 276-0004
+ADD Trilok Yadav 276-0005
+ADD Deepak Yadav 276-0006
+ADD Logan Farmer 276-0007
+ADD Santosh Sah 276-0008
+ADD Kiran Bhandari 276-0009
+LIST
+COUNT
+
+# Duplicate ADD
+ADD Anjay Sah 977-9825
+
+# LOOKUP found, shared last name, not found
+LOOKUP Sah
+LOOKUP Yadav
+LOOKUP Nobody
+
+# PREFIX with matches and none
+PREFIX S
+PREFIX Ya
+PREFIX Q
+
+# Bad input
+ADD OnlyTwo Args
+LOOKUP
+FOO
+
+# DELETE: two children (not root), leaf, one child
+DELETE Chaudhary
+LIST
+DELETE Bhandari
+LIST
+DELETE Neupane
+LIST
+COUNT
+
+# DELETE with a last and first name, not found, then the root
+DELETE Sah Rohit
+DELETE Sah Zed
+DELETE Nobody
+DELETE Sah
+LIST
+COUNT
+QUIT
