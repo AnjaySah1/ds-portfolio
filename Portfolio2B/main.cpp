@@ -11,9 +11,13 @@
 
 // Contact directory driver. Reads one command per line from standard input.
 // ADD  <first> <last> <phone>
+// LOOKUP <last>
+// DELETE <last> [<first>]
+// PREFIX <text>
 // LIST
 // COUNT
 // QUIT
+
 
 // Formats a contact as: Last, First phone
 
@@ -97,6 +101,60 @@ void handleLookup(const BST<Contact>& directory, std::istringstream& args)
     printContacts(matches);
 }
 
+// Deletes contacts by last name. If a first name is also given, only that contact is deleted.
+// With just a last name, every contact with that last name is deleted.
+
+void handleDelete(BST<Contact>& directory, std::istringstream& args)
+{
+    std::string last, first, extra;
+    if (!(args >> last)) {
+	std::cout << " Usage: DELETE <last> [<first>]" << std::endl;
+	return;
+    }
+    bool hasFirst = static_cast<bool>(args >> first);
+    if (hasFirst && (args >> extra)) {
+	std::cout << "Usage: DELETE <last> [<first>]" << std::endl;
+	return;
+    }
+
+    std::vector<Contact> matches = findByLastName(directory, last);
+    if (hasFirst) {
+	matches.erase(std::remove_if(matches.begin(), matches.end(),
+		      [&first](const Contact& c) { return c.firstName != first; }),
+		      matches.end());
+    }
+    if (matches.empty()) {
+	std::cout << "Not found: nothing to delete for " << last << std::endl;
+	return;
+    }
+    for (const Contact& c : matches) {
+	directory.remove(c);
+	std::cout << "Deleted: " << formatContact(c) << std::endl;
+    }
+}
+
+// Prints every contact whose last name starts with the given text.
+// Uses the pruning walk, so it skips subtrees that cannot match.
+
+void handlePrefix(const BST<Contact>& directory, std::istringstream& args)
+{
+    std::string text, extra;
+    if (!(args >> text) || (args >> extra)) {
+	std::cout << "Usage: PREFIX <text>" << std::endl;
+	return;
+    }
+
+    std::vector<Contact> matches = directory.collect([&text](const Contact& c) {
+	return c.lastName.compare(0, text.size(), text);
+    });
+    if (matches.empty()) {
+	std::cout << "No last names start with " << text << std::endl;
+	return;
+    }
+    std::cout << matches.size() << " contact(s) with last name starting with " << text << ":" << std::endl;
+    printContacts(matches);
+}
+
 
 int main()
 {
@@ -134,6 +192,10 @@ int main()
             handleAdd(directory, args);
         } else if (command == "LOOKUP") {
             handleLookup(directory, args);
+	} else if (command == "DELETE") {
+	    handleDelete(directory, args);
+	} else if (command == "PREFIX") {
+	    handlePrefix(directory, args);
         } else if (command == "LIST") {
             handleList(directory);
         } else if (command == "COUNT") {
