@@ -16,13 +16,13 @@ Command words are case-insensitive (`add` and `ADD` both work) and are entered o
 * `LOOKUP <last>` : Displays every contact with the specified last name.
 * `DELETE <last>` : Deletes all contacts with the specified last name.
 * `DELETE <last> <first>` : Deletes the contact matching both names.
-* `PREFIX <test>` : Displays contacts whose last names start with the specified test (BONUS)>
+* `PREFIX <test>` : Displays contacts whose last names start with the specified test (BONUS)
 * `LIST`: Displays all contacts in sorted order.
 * `COUNT`: Reports the number of contacts and the tree height.
 * `QUIT`: Exits the program.
 
 `LOOKUP` and `DELETE` print a message when no matching contacts are found.
-`LOOKUP`, `PREFIX`, and `DELETE` use the pruning tree walk to skip subtrees that connot contain matching contacts.
+`LOOKUP`, `PREFIX`, and `DELETE` use the pruning tree walk to skip subtrees that cannot contain matching contacts.
 
 ## Files
 
@@ -33,7 +33,7 @@ Command words are case-insensitive (`add` and `ADD` both work) and are entered o
 * `tests.txt`: This is test commands.
 * `expected_output.txt`: Expected output used to check the tests.
 
-## How to Complie and Run
+## How to Compile and Run
 
 On `ludwig.mcs.uvawise.edu`, run:
 
@@ -53,7 +53,7 @@ To remove generated build files:
 make clean
 ```
 
-The project uses `g++` with the wall `-Wall -Wextra -std=c++17` complier flags and compiles with no warnings. The program can also read commands from a file:
+The project uses `g++` with the `-Wall -Wextra -std=c++17` compiler flags and compiles with no warnings. The program can also read commands from a file:
 
 ```
 ./main < tests.txt
