@@ -4,3 +4,4 @@ main
 *.o
 *.out
 a.out
+actual_output.txt
