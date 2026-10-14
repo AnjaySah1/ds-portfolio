@@ -105,6 +105,37 @@ int main() {
         std::cout << "After removing node 70  with only a right child: ";
         printVector(rightChild.inorder());
 
+        // Two children, successor is the right child itself. Expect preorder: 70 30 80
+        BST<int> succDirect;
+        for (int v : {50, 30, 70, 80}) {
+            succDirect.insert(v);
+        }
+        succDirect.remove(50);
+        std::cout << "Preorder after removing 50 (successor is the right child): ";
+        printVector(succDirect.preorder());
+
+        // Two children, successor is deep in the right subtree and has a right child.
+        // Expect preorder: 60 30 70 65, levelorder: 60 30 70 65, height: 3
+        BST<int> succDeep;
+        for (int v : {50, 30, 70, 60, 65}) {
+            succDeep.insert(v);
+        }
+        succDeep.remove(50);
+        std::cout << "Preorder after removing 50 (successor has a right child): ";
+        printVector(succDeep.preorder());
+        std::cout << "Level order after the same removal: ";
+        printVector(succDeep.levelorder());
+        std::cout << "Height after the same removal: " << succDeep.height() << std::endl;
+
+        // Root with only one child. Expect inorder: 30 and size 1
+        BST<int> rootOneChild;
+        rootOneChild.insert(50);
+        rootOneChild.insert(30);
+        rootOneChild.remove(50);
+        std::cout << "After removing root that has one child: ";
+        printVector(rootOneChild.inorder());
+        std::cout << "Size after removing root with one child: " << rootOneChild.size() << std::endl;
+
         //Rule of Three: copy constructor makes an independent deep copy.
         BST<int> original;
         for (int v : values) {
