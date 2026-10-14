@@ -21,3 +21,5 @@ On `ludwig.mcs.uvawise.edu`, run the following commands from the project directo
 
 The tree is not self-balancing. Inserting values in sorted order can produce a highly unbalanced tree, making some operations linear in time and increasing the risk of stack overflow for very large trees.
 The stored type must support `operator<` and be copyable. Move construction and move assignment are not implemented.
+
+Height counts nodes on the longest path from the root, so an empty tree has height 0 and a single node has height 1.

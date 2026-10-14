@@ -16,7 +16,7 @@ Command words are case-insensitive (`add` and `ADD` both work) and are entered o
 * `LOOKUP <last>` : Displays every contact with the specified last name.
 * `DELETE <last>` : Deletes all contacts with the specified last name.
 * `DELETE <last> <first>` : Deletes the contact matching both names.
-* `PREFIX <test>` : Displays contacts whose last names start with the specified test (BONUS)
+* `PREFIX <text>` : Displays contacts whose last names start with the specified text (BONUS)
 * `LIST`: Displays all contacts in sorted order.
 * `COUNT`: Reports the number of contacts and the tree height.
 * `QUIT`: Exits the program.
@@ -30,7 +30,7 @@ Command words are case-insensitive (`add` and `ADD` both work) and are entered o
 * `Contact.h`: Contact structure and comparison operator.
 * `main.cpp` : Command-line interface and command handlers.
 * `Makefile` : Build, run, test, and clean rules.
-* `tests.txt`: This is test commands.
+* `tests.txt`: Commands used by `make test`.
 * `expected_output.txt`: Expected output used to check the tests.
 
 ## How to Compile and Run
@@ -69,3 +69,5 @@ The project uses `g++` with the `-Wall -Wextra -std=c++17` compiler flags and co
 * Names and phone numbers cannot contain spaces because the driver reads each field separately.
 * The BST does not balance itself. Inserting contacts in sorted order can produce a long chain, increasing operation times and potentially causing deep recursion for large inputs.
 
+
+Tree height in COUNT counts nodes on the longest path from the root, so an empty directory shows height 0 and a single contact shows height 1.
