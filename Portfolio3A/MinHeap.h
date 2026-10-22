@@ -20,6 +20,21 @@ public:
         data_.push_back(value);
 	heapifyUp(data_.size() - 1);
     }
+    // Remove and return the smallest value.
+    // Move the last iten to the root, then sink it back down.
+    T extractMin() {
+	if (data_.empty()) {
+	    throw std::underflow_error("MinHeap::extractMin on an epty heap");
+	}
+	T smallest = data_.front();
+	data_.front() = data_.back();
+	data_.pop_back();
+	if (!data_.empty()) {
+	    heapifyDown(0);
+	}
+	return smallest;
+    }
+
 
     // Smallest value, without removing it.
     const T& peek() const {
@@ -47,6 +62,28 @@ private:
 	    }
 	}
      }
+
+     // Swap with the smaller child while a child is smaller.
+     void heapifyDown(std::size_t i) {
+	 const std::size_t n = data_.size();
+	 while (true) {
+	     std::size_t left = 2 * i + 1;
+	     std::size_t right = 2 * i + 2;
+	     std::size_t smallest = i;
+
+	     if (left < n && data_[left] < data_[smallest]) {
+		smallest = left;
+	     }
+	     if (right < n && data_[right] < data_[smallest]) {
+		smallest = right;
+	     }
+	     if (smallest == i) {
+		break;
+	     }
+	     std::swap(data_[i], data_[smallest]);
+	     i = smallest;
+	 }
+      }
 };
 
 #endif
