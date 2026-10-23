@@ -1,5 +1,6 @@
 #include <iostream>
 #include "MinHeap.h"
+#include "HashTable.h"
 
 int main() {
     MinHeap<int> h;
@@ -13,6 +14,20 @@ int main() {
     while (!h.isEmpty()) {
 	std::cout << h.extractMin() << " ";
     }
+
+    std::cout << "\n";
+
+
+
+    HashTable<std::string, int> t;
+    t.insert("apple", 1);
+    t.insert("banana", 2);
+    t.insert("apple", 100);      // update, not a new key
+    std::cout << "table size: " << t.size() << "\n";
+    std::cout << "apple: " << *t.find("apple") << "\n";
+    std::cout << "banana: " << *t.find("banana") << "\n";
+    std::cout << "durian found? " << (t.find("durian") != nullptr) << "\n";
+
     std::cout << "\n";
     return 0;
 
