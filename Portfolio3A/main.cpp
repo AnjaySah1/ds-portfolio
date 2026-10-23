@@ -29,6 +29,17 @@ int main() {
     std::cout << "durian found? " << (t.find("durian") != nullptr) << "\n";
 
     std::cout << "\n";
+
+    std::cout << "remove banana: " << t.remove("banana") << "\n";
+    std::cout << "remove banana again: " << t.remove("banana") << "\n";
+    std::cout << "table size: " << t.size() << "\n";
+    std::cout << "banana found? " << (t.find("banana") != nullptr) << "\n";
+    std::cout << "apple still there? " << (t.find("apple") != nullptr) << "\n";
+
+
+
+
+
     return 0;
 
 }

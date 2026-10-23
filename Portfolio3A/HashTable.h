@@ -66,6 +66,20 @@ public:
 	  return nullptr;
       }
 
+      // Remove a key. Returns true if it was there, false if not.
+      bool remove(const K& key) {
+	  std::list<Entry>& bucket = buckets_[indexFor(key)];
+	  for (typename std::list<Entry>::iterator it = bucket.begin();
+	       it != bucket.end(); ++it) {
+	      if (it->key == key) {
+		  bucket.erase(it);
+		  --count_;
+		  return true;
+	      }
+	  }
+	  return false;
+       }
+
       std::size_t size() const { return count_; }
       bool isEmpty() const { return count_ == 0; }
       std::size_t bucketCount() const { return buckets_.size(); }
