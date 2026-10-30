@@ -47,6 +47,17 @@ public:
     std::size_t size() const { return data_.size(); }
     bool isEmpty() const { return data_.empty(); }
 
+    // Checks the heap rule for every parent/child pair.
+    bool isValid() const {
+	for (std::size_t i = 1; i < data_.size(); ++i) {
+	    if (data_[i] < data_[(i - 1) / 2]) {
+		return false;
+	    }
+	}
+	return true;
+     }
+
+
 private:
     std::vector<T> data_;
 

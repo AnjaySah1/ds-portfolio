@@ -32,6 +32,15 @@ struct CustomHash<std::string> {
     }
 };
 
+// Integers hash to themselves; the table's modulo step does the rest.
+template <>
+struct CustomHash<int> {
+    std::size_t operator()(const int& key) const {
+	return static_cast<std::size_t>(key);
+    }
+};
+
+
 template <typename K, typename V, typename Hash = CustomHash<K> >
 class HashTable {
 public:
@@ -56,6 +65,19 @@ public:
 	}
 	return true;
      }
+
+     // Length of the longest chain. If the lenght of number is big then it is a weak hash.
+     std::size_t longestChain() const {
+	std::size_t longest = 0;
+	for (std::size_t i = 0; i < buckets_.size(); ++i) {
+	    if (buckets_[i].size() > longest) {
+		longest = buckets_[i].size();
+	    }
+	}
+	return longest;
+    }
+
+
 
      // Pointer to the value, or nullptr if the key is not in the table.
      V* find(const K& key) {

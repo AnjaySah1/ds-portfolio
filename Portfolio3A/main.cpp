@@ -48,6 +48,14 @@ int main() {
     std::cout << "a b c d: " << *r.find("a") << " " << *r.find("b") << " "
 	      << *r.find("c") << " " << *r.find("d") << "\n";
 
+
+    std::cout << "heap valid? " << h.isValid() << "\n";
+    std::cout << "longest chain: " << r.longestChain() << "\n";
+    HashTable<int, std::string> n;
+    n.insert(42, "answer");
+    std::cout << "int key 42: " << *n.find(42) << "\n";
+
+
     return 0;
 
 }
