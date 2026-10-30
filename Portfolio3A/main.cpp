@@ -37,8 +37,16 @@ int main() {
     std::cout << "apple still there? " << (t.find("apple") != nullptr) << "\n";
 
 
-
-
+    HashTable<std::string, int> r(4);
+    r.insert("a", 1);
+    r.insert("b", 2);
+    r.insert("c", 3);
+    std::cout<< "buckets after 3 inserts: " << r.bucketCount() << "\n";
+    r.insert("d", 4);
+    std::cout << "buckets after 4 inserts: " << r.bucketCount() << "\n";
+    std::cout << "load factor: " << r.loadFactor() << "\n";
+    std::cout << "a b c d: " << *r.find("a") << " " << *r.find("b") << " "
+	      << *r.find("c") << " " << *r.find("d") << "\n";
 
     return 0;
 

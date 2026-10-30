@@ -51,6 +51,9 @@ public:
 	}
 	bucket.push_back(Entry(key, value));
 	++count_;
+	if (loadFactor() > maxLoadFactor()) {
+	    rehash(buckets_.size() * 2);
+	}
 	return true;
      }
 
@@ -84,6 +87,15 @@ public:
       bool isEmpty() const { return count_ == 0; }
       std::size_t bucketCount() const { return buckets_.size(); }
 
+      //Rehash when the load factor goes above this value.
+      static double maxLoadFactor() { return 0.75; }
+
+      // Entries divided by buckets.
+      double loadFactor() const {
+	return static_cast<double>(count_) / static_cast<double>(buckets_.size());
+      }
+
+
 private:
     struct Entry {
 	K key;
@@ -98,6 +110,21 @@ private:
      std::size_t indexFor(const K& key) const {
 	 return hash_(key) % buckets_.size();
      }
+
+     // Creating a bigger bucket array and insert all entries again.
+     //Entries cannot be copied to the same positions because their bucket indexes depend on the number of buckets.
+
+     void rehash(std::size_t newBucketCount) {
+	std::vector<std::list<Entry> > newBuckets(newBucketCount);
+	for (std::size_t i = 0; i < buckets_.size(); ++i) {
+	     for (typename std::list<Entry>::iterator it = buckets_[i].begin();
+		it !=buckets_[i].end(); ++it) {
+		std::size_t index = hash_(it->key) % newBucketCount;
+		newBuckets[index].push_back(*it);
+	     }
+	}
+	buckets_.swap(newBuckets);
+      }
 };
 
 #endif
