@@ -19,7 +19,7 @@ struct CustomHash {
 };
 
 // Custom string hash: start at 5381, then for each character do  hash = hash * 131  + character
-// Every character changes the result and position matters, so "cat" and "act" hash differently. 131 is used instead of 33 because with 33, anagrams land in the same bucket when the bucket count is a power of two. Overflow just wraps around for unsigned types.
+// Every character changes the result and position matters, so "cat" and "act" hash differently. 131 is used instead of 33 because with 33, anagrams land in the same bucket when the bucket count is a power of two up to 32. Overflow just wraps around for unsigned types.
 
 template<>
 struct CustomHash<std::string> {
