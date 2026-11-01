@@ -1,0 +1,4 @@
+A heap is a tree. The heap keeps the smallest item at the top, and a hash table keeps items in buckets. Hashing is fast, but the hash table is not sorted.
+
+Don't Worry: the samllest item is easy to find in a heap, the hash table finds a key fast. HEAP, heap, Heap! The heap is the topic; the table is too. It's a good day to count words (1, 2, 3) in a text file.
+

@@ -5,6 +5,9 @@
 //	LIST			show all tasks in order, without removing them
 //	QUIT			exit
 
+// Driver for Portfolio 3B.
+//  ./portfolio3b               priority task scheduler (type commands)
+//  ./portfolio3b words <file>  word frequency counter
 
 #include <iostream>
 #include <sstream>
@@ -12,6 +15,11 @@
 #include <vector>
 
 #include "Scheduler.h"
+#include "WordFreq.h"
+
+// -----------------------------------------------------
+// Task scheduler
+// ----------------------------------------------------
 
 static void printTask(const Task& t) {
     std::cout << t.name << " (priority " << t.priority << ")";
@@ -83,8 +91,7 @@ static void handleList(const Scheduler& s) {
      }
 }
 
-
-int main() {
+static void runScheduler() {
     Scheduler scheduler;
     std::cout << "Task scheduler. Commands: ADD <name> <priority>, NEXT, LIST, QUIT\n";
 
@@ -112,6 +119,41 @@ int main() {
      }
      printSummary(scheduler);
      std::cout << "Bye.\n";
-     return 0;
 }
 
+// --------Word Frequency Counter--------------
+
+static int runWords(const std::string& path) {
+    std::string text;
+    if (!readFile(path, text)) {
+	std::cout << "Could not open file: " << path << "\n";
+	return 1;
+    }
+
+    std::vector<std::string> tokens = tokenize(text);
+    WordCounter counter;
+    for (std::size_t i = 0; i < tokens.size(); ++i) {
+	counter.add(tokens[i]);
+    }
+
+    std::cout << "Word frequency report: " << path << "\n";
+    std::cout << "  Total words:   " << counter.totalWords() << "\n";
+    std::cout << "  Unique words:  " << counter.uniqueWords() << "\n";
+    std::cout << "  Hash table:    " << counter.bucketCount() << " buckets, load factor "
+	      << counter.loadFactor() << ", longest chain " << counter.longestChain() << "\n";
+    return 0;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc == 1) {
+	runScheduler();
+	return 0;
+    }
+    if (argc == 3 && std::string(argv[1]) == "words") {
+	return runWords(argv[2]);
+    }
+    std::cout << "Usage:\n"
+	      << " " << argv[0] << "		     task scheduler (type commands)\n"
+	      << " " << argv[0] << " words <file>    word frequency counter\n";
+    return 1;
+}
