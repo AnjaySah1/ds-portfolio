@@ -9,6 +9,7 @@
 //  ./portfolio3b               priority task scheduler (type commands)
 //  ./portfolio3b words <file>  word frequency counter
 
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -141,6 +142,15 @@ static int runWords(const std::string& path) {
     std::cout << "  Unique words:  " << counter.uniqueWords() << "\n";
     std::cout << "  Hash table:    " << counter.bucketCount() << " buckets, load factor "
 	      << counter.loadFactor() << ", longest chain " << counter.longestChain() << "\n";
+
+    std::vector<WordCount> top = counter.topWords(10);
+    std::cout << "\nTop " << top.size() << " words (ties are listed alphabetically)\n";
+    std::cout << "  Rank  Word             Count\n";
+    for (std::size_t i = 0; i < top.size(); ++i) {
+	std::cout << "  " << std::setw(4) << (i + 1) << "  " << std::left
+		  << std::setw(15) << top[i].word << std::right
+		  << std::setw(5) << top[i].count << "\n";
+    }
     return 0;
 }
 

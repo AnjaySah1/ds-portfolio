@@ -4,6 +4,7 @@
 #ifndef WORDFREQ_H
 #define WORDFREQ_H
 
+#include <algorithm>
 #include <cctype>
 #include <cstddef>
 #include <fstream>
@@ -12,8 +13,9 @@
 #include <vector>
 
 #include "HashTable.h"
+#include "MinHeap.h"
 
-// Splits text into lowercase words. A word is a run of letters. 
+// Splits text into lowercase words. A word is a run of letters.
 // An apostrophe counts as part of a word when a letter comes right after it (so "don't" is one word). Digits and punctuation end a word.
 
 inline std::vector<std::string> tokenize(const std::string& text) {
@@ -49,6 +51,23 @@ inline bool readFile(const std::string& path, std::string& contents) {
     return true;
 }
 
+// A word and how many times it appeared. This is what the top-N heap holds.
+// Here "smaller" means "worse": fewer appearances, or the same number of appearances but later in the alphabet. So the best word is the one with the highest count, and ties are listed alphabetically.
+struct WordCount {
+    std::string word;
+    int count;
+
+    WordCount() : count(0) {}
+    WordCount(const std::string& w, int c) : word(w), count(c) {}
+
+    bool operator<(const WordCount& other) const {
+	if (count != other.count) {
+	    return count < other.count;
+	}
+	return word > other.word;
+    }
+};
+
 class WordCounter {
 public:
     WordCounter() : total_(0) {}
@@ -70,6 +89,23 @@ public:
 	 int* found = counts_.find(word);
 	 return found == nullptr ? 0 : *found;
      }
+
+     // The n most common words, best first. Uses my MinHeap as a "keep the best n" filter: every word goes in, and whenever the heap holds more than n, the worst word is removed. What is left at the end are the best n, and they come out worst to best, so the list is reversed.
+     std::vector<WordCount> topWords(std::size_t n) {
+	 MinHeap<WordCount> heap;
+	 for (std::size_t i = 0; i < words_.size(); ++i) {
+	     heap.insert(WordCount(words_[i], count(words_[i])));
+	     if (heap.size() > n) {
+		 heap.extractMin();
+	     }
+	 }
+	 std::vector<WordCount> result;
+	 while (!heap.isEmpty()) {
+		result.push_back(heap.extractMin());
+	 }
+	 std::reverse(result.begin(), result.end());
+	 return result;
+      }
 
      std::size_t totalWords() const { return total_; }
      std::size_t uniqueWords() const { return counts_.size(); }
