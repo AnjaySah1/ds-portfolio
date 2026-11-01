@@ -49,10 +49,24 @@ static void handleNext(Scheduler& s) {
      if (s.next(t)) {
 	std::cout << "Next task: ";
 	printTask(t);
-	std::cout << "\n";
+	std::cout << " [STL check: " << (s.lastNextMatched() ? "PASS" : "FAIL") << "]\n";
      } else {
-	std::cout << "No task waiting.\n";
+	std::cout << "No tasks waiting.\n";
      }
+}
+
+static void handleCheck(const Scheduler& s) {
+    std::cout << "Order of " << s.size() << " waiting task(s) vs std::priority_queue: "
+	      << (s.matchesStl() ? "PASS" : "FAIL") << "\n";
+}
+
+static void printSummary(const Scheduler& s) {
+    std::cout << "\nSTL cross-check summary\n";
+    std::cout << " NEXT result checked: " << s.nextChecks() << "\n";
+    std::cout << " Mismatches:          " << s.nextMismatches() << "\n";
+    std::cout << " Waiting tasks order: " << (s.matchesStl() ? "PASS" : "FAIL") << "\n";
+    bool ok = (s.nextMismatches() == 0 && s.matchesStl());
+    std::cout << "  Overall:              " << (ok ? "PASS" : "FAIL") << "\n";
 }
 
 static void handleList(const Scheduler& s) {
@@ -87,6 +101,8 @@ int main() {
 	    handleNext(scheduler);
 	} else if (command == "LIST") {
 	    handleList(scheduler);
+	} else if (command == "CHECK") {
+	    handleCheck(scheduler);
 	} else if (command == "QUIT") {
 	    break;
 	} else if (!command.empty()) {
@@ -94,7 +110,8 @@ int main() {
 	}
 	std::cout << "> ";
      }
-     std::cout << "\nBye.\n";
+     printSummary(scheduler);
+     std::cout << "Bye.\n";
      return 0;
 }
 

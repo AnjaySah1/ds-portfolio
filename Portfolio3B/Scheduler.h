@@ -6,6 +6,8 @@
 #define SCHEDULER_H
 
 #include <cstddef>
+#include <functional>
+#include <queue>
 #include <string>
 #include <vector>
 
@@ -29,15 +31,25 @@ struct Task {
 	}
 	return order < other.order;
     }
+
+    // std::priority_queue with std::greater needs this to act as a min-queue.
+    bool operator>(const Task& other) const { return other < *this; }
+
+    bool operator ==(const Task& other) const {
+	return name == other.name && priority == other.priority &&
+	       order == other.order;
+    }
 };
 
 class Scheduler {
 public:
-    Scheduler() : nextOrder_(0) {}
+    Scheduler() : nextOrder_(0), nextChecks_(0), nextMismatches_(0) {}
 
     void add(const std::string& name, int priority) {
-	heap_.insert(Task(name, priority, nextOrder_));
+        Task t(name, priority, nextOrder_);
 	++nextOrder_;
+	heap_.insert(t);
+	stl_.push(t);
     }
 
     // Takes the most urgent task out of the scheduler and puts it in result. Return false ( and changes nothing) if there are no tasks.
@@ -46,6 +58,14 @@ public:
 	    return false;
 	}
 	result = heap_.extractMin();
+	Task expected = stl_.top();
+	stl_.pop();
+
+	++nextChecks_;
+	lastMatched_ = (result == expected);
+	if (!lastMatched_) {
+	    ++nextMismatches_;
+	}
 	return true;
     }
 
@@ -59,13 +79,42 @@ public:
 	return tasks;
      }
 
+     // Checks the whole remaining order of my heao against a copy of the STL queue, without removing anything.
+     bool matchesStl() const {
+	std::vector<Task> mine = list();
+	StlQueue copy  = stl_;
+	if (mine.size() != copy.size()) {
+	    return false;
+	}
+	for (std::size_t i = 0; i< mine.size(); ++i) {
+	    if (!(mine[i] == copy.top())) {
+		return false;
+	    }
+	    copy.pop();
+	}
+	return true;
+      }
+
+     // Did the most recent next() match the STL queue?
+     bool lastNextMatched() const { return lastMatched_; }
+     std::size_t nextChecks() const { return nextChecks_; }
+     std::size_t nextMismatches() const { return nextMismatches_; }
+
+
      std::size_t size() const { return heap_.size(); }
      bool isEmpty() const { return heap_.isEmpty(); }
 
 
 private:
+    typedef std::priority_queue<Task, std::vector<Task>, std::greater<Task> > StlQueue;
+
     MinHeap<Task> heap_;
+    StlQueue stl_;
     std::size_t nextOrder_;
+    std::size_t nextChecks_;
+    std::size_t nextMismatches_;
+    bool lastMatched_ = true;
+
 };
 
 #endif
