@@ -50,13 +50,13 @@ The word with the lowest count is at the root. For equal counts, the alphabetica
 
 ## Bonus: DELAY
 
-`DELAY <name> <newPriority>` changes a waiting task's priority.Here, A smaller number makes it more urgent, and a larger number makes it less urgent.
+`DELAY <name> <newPriority>` changes a waiting task's priority. A smaller number makes it more urgent, and a larger number makes it less urgent.
 
 If several waiting tasks have the same name, the one that would run first is changed. The task keeps its original insertion-order number, so it still wins ties against tasks added after it.
 
 ### Why updating an array-based heap takes more work
 
-Upadting a priority in an array-based heap takes mroe work because it takes two steps: find the task, then fix the heap order.
+Updating a priority in an array-based heap takes more work because it takes two steps: find the task, then fix the heap order.
 
 A heap is ordered by priority, not by name. Finding a task by name can mean checking all n items, which is O(n). Once the task's position in the array is known, a smaller priority number moves it up with `heapifyUp`, and a larger one moves it down with `heapifyDown`. That repair is O(log n).
 
