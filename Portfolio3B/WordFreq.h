@@ -8,8 +8,10 @@
 #include <cctype>
 #include <cstddef>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "HashTable.h"
@@ -47,6 +49,9 @@ inline bool readFile(const std::string& path, std::string& contents) {
     }
     std::ostringstream buffer;
     buffer << in.rdbuf();
+    if (in.bad()) {
+	return false;
+    }
     contents = buffer.str();
     return true;
 }
@@ -72,7 +77,7 @@ class WordCounter {
 public:
     WordCounter() : total_(0) {}
 
-    // Count one word. HashTable::insert replaces the value of an existing key, so look the word up first and only insert when it is new.
+    // Count one word.The word should already be lowercase, straight from tokenize(). HashTable::insert replaces the value of an existing key, so look the word up first and only insert when it is new.
     void add(const std::string& word) {
 	int* existing = counts_.find(word);
 	if (existing != nullptr) {
@@ -123,5 +128,83 @@ private:
     std::size_t total_;
 };
 
-#endif
+// Cross-check: counts the same tokens with std::unordered_map and compares everything with my HashTable counts.
+// Prints each check and any discrepancies (at most 10 are listed). Returns true only if all pass.
 
+inline bool crossCheckWords(WordCounter& counter,
+			    const std::vector<std::string>& tokens,
+			    std::ostream& out) {
+    std::unordered_map<std::string, int> reference;
+    for (std::size_t i = 0; i < tokens.size(); ++i) {
+	++reference[tokens[i]];
+    }
+
+    // 1. Totals.
+    bool totalOk = (counter.totalWords() == tokens.size());
+    bool uniqueOk = (counter.uniqueWords() == reference.size());
+
+    // 2. Every word's count, checked from the unordered_map side.
+    std::size_t mismatches = 0;
+    std::size_t listed = 0;
+    for (std::unordered_map<std::string, int>::const_iterator it = reference.begin();
+	 it != reference.end(); ++it) {
+	int mine = counter.count(it->first);
+	if (mine != it->second) {
+	    ++mismatches;
+	    if (listed < 10) {
+		out << "	DISCREPANCY: \"" << it->first << "\" HashTable "
+		    << mine << ", unordered_map " << it->second << "\n";
+		++listed;
+	    }
+	}
+     }
+
+     // 3. Every word my HashTable knows about must also be in the map.
+     std::size_t extra = 0;
+     const std::vector<std::string>& mine = counter.words();
+     for (std::size_t i = 0; i < mine.size(); ++i) {
+	 if (reference.find(mine[i]) == reference.end()) {
+	     ++extra;
+	     if (listed < 10) {
+		 out << "   DISCREPANCY: \"" << mine[i]
+		     << "\" is in the HashTable but not in unordered_map\n";
+		 ++listed;
+	     }
+	 }
+     }
+
+     // 4. Top 10: sort all the map's words with the same rule and compare.
+     std::vector<WordCount> all;
+     for (std::unordered_map<std::string, int>::const_iterator it = reference.begin();
+	  it != reference.end(); ++it) {
+	 all.push_back(WordCount(it->first, it->second));
+     }
+     std::sort(all.begin(), all.end(),
+	       [](const WordCount& a, const WordCount& b) { return b < a; });
+     if (all.size() > 10) {
+	 all.resize(10);
+     }
+     std::vector<WordCount> top = counter.topWords(10);
+     bool topOk = (top.size() == all.size());
+     for (std::size_t i = 0; topOk && i < top.size(); ++i) {
+	 if (top[i].word != all[i].word || top[i].count != all[i].count) {
+	     topOk = false;
+         }
+     }
+
+     bool countsOk = (mismatches == 0 && extra == 0);
+     bool ok = totalOk && uniqueOk && countsOk && topOk;
+
+     out << "  Total words match:    " << (totalOk ? "PASS" : "FAIL") << " ("
+	 << counter.totalWords() << " vs " << tokens.size() << ")\n";
+     out << "  Unique words match:   " << (uniqueOk ? "PASS" : "FAIL") << " ("
+	 << counter.uniqueWords() << " vs " << reference.size() << ")\n";
+     out << "  Every count matches:  " << (countsOk ? "PASS" : "FAIL") << " ("
+	 << reference.size() << " words checked, " << (mismatches + extra)
+	 << " discrepancies)\n";
+     out << "  Top 10 matches:       " << (topOk ? "PASS" : "FAIL") << "\n";
+     out << "  Overall:		     " << (ok ? "PASS" : "FAIL") << "\n";
+     return ok;
+}
+
+#endif

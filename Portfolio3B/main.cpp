@@ -151,7 +151,10 @@ static int runWords(const std::string& path) {
 		  << std::setw(15) << top[i].word << std::right
 		  << std::setw(5) << top[i].count << "\n";
     }
-    return 0;
+
+    std::cout << "\nSTL cross-check (std::unordered_map)\n";
+    bool ok = crossCheckWords(counter, tokens, std::cout);
+    return ok ? 0 : 1;
 }
 
 int main(int argc, char* argv[]) {
