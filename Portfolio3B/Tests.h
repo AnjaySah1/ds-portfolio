@@ -98,26 +98,73 @@ inline void testScheduler(TestReport& t) {
 	t.check("equal priorities come out first-added first", ok);
       }
 
-      t.section("Scheduler: LIST does not remove anything");
-      {
+    t.section("Scheduler: List does not remove anything");
+    {
 	Scheduler s;
-	s.add("first", 2);
-	s.add("second", 2);
-	s.add("third", 2);
+	s.add("w", 3);
+	s.add("x", 1);
+	s.add("y", 2);
 	std::vector<Task> listed = s.list();
-        t.check("LIST shows 3 tasks", listed.size() == 3);
-        t.check("LIST leaves size at 3", s.size() == 3);
-        bool ok = true;
-        for (std::size_t i = 0; i < listed.size(); ++i) {
-            Task task;
-            if (!s.next(task) || !(task == listed[i])) {
-                ok = false;
-            }
-        }
-        t.check("NEXT gives tasks in the same order LIST showed", ok);
+	t.check("LIST shows 3 tasks", listed.size() == 3);
+	t.check("LIST leaves size at 3", s.size() == 3);
+	bool ok = true;
+	for (std::size_t i = 0; i < listed.size(); ++i) {
+	    Task task;
+	    if (!s.next(task) || !(task == listed[i])) {
+		ok = false;
+	    }
+	}
+	t.check("NEXT gives tasks in the same order LIST showed", ok);
+     }
+
+     t.section("Scheduler: DELAY");
+     {
+	Scheduler s;
+	s.add("a", 1);
+	s.add("b", 2);
+	s.add("c", 3);
+	int old = 0;
+	t.check("DELAY of an unknown task returns false", !s.delay("nope", 1, old));
+	t.check("a failed DELAY changes nothing", s.size() == 3 && s.matchesStl());
+
+	t.check("DELAY c to 0 works", s.delay("c", 0, old) && old == 3);
+	std::vector<Task> listed = s.list();
+	t.check("c is now first, then a, then b",
+		listed.size() == 3 && listed[0].name == "c" &&
+		listed[1].name == "a" && listed[2].name == "b");
+	t.check("size is unchanged after DELAY", s.size() == 3);
+	t.check("order still matches STL after DELAY", s.matchesStl());
+
+	t.check("DELAY a to 9 (less urgent) works", s.delay("a", 9, old) && old == 1);
+	Task task;
+	bool ok = s.next(task) && task.name == "c";
+        ok = ok && s.next(task) && task.name == "b";
+        ok = ok && s.next(task) && task.name == "a" && task.priority == 9;
+        t.check("a now runs last, with its new priority", ok);
     }
 
-    t.section("Scheduler: 4000 random ADD and NEXT commands vs STL");
+    t.section("Scheduler: DELAY and ties");
+    {
+	Scheduler s;
+	s.add("x", 5);
+	s.add("y", 3);
+	int old = 0;
+	s.delay("x", 3, old);
+	Task task;
+	bool ok = s.next(task) && task.name == "x";
+	ok = ok && s.next(task) && task.name == "y";
+	t.check("a delayed task keeps its place among equal priorities", ok);
+
+	Scheduler dup;
+	dup.add("same", 4);
+	dup.add("same", 2);
+	dup.delay("same", 9, old);
+	t.check("with duplicate names, the one that runs first is changed",
+		old == 2 && dup.list().size() == 2 &&
+		dup.list()[0].priority == 4 && dup.list()[1].priority == 9);
+    }
+
+    t.section("Scheduler: 4000 random ADD, DELAY, and NEXT commands vs STL");
     {
 	Scheduler s;
 	std::srand(2026);
@@ -125,9 +172,14 @@ inline void testScheduler(TestReport& t) {
 	int adds = 0;
 	int nexts = 0;
 	for (int i = 0; i < 4000; ++i) {
-	    if (std::rand() % 100 < 60) {
+	    int pick = std::rand() % 100;
+	    if (pick < 55) {
 		s.add("task" + std::to_string(i), std::rand() % 10 - 3);
 		++adds;
+	    } else if (pick < 70) {
+		int old = 0;
+		s.delay("task" + std::to_string(std::rand() % (i + 1)),
+			std::rand() % 10 - 3, old);
 	    } else {
 		Task task;
 		if (s.next(task)) {

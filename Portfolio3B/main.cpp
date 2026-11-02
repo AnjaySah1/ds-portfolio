@@ -25,31 +25,57 @@ static void printTask(const Task& t) {
     std::cout << t.name << " (priority " << t.priority << ")";
 }
 
+// Reads "<name> <priority>" from the rest of a command line. The last word is the priority and everything before it is the name (so names can have spaces). Prints a message and returns false if the line is not valid.
+
+static bool readNameAndPriority(std::istringstream& in, const std::string& usage,
+                                std::string& name, int& priority) {
+    std::vector<std::string> words;
+    std::string w;
+    while (in >> w) {
+        words.push_back(w);
+    }
+    if (words.size() < 2) {
+        std::cout << "Usage: " << usage << "\n";
+        return false;
+    }
+
+    std::istringstream num(words.back());
+    char extra;
+    if (!(num >> priority) || (num >> extra)) {
+        std::cout << "Priority must be a whole number, like: " << usage << "\n";
+        return false;
+    }
+
+    name = words[0];
+    for (std::size_t i = 1; i + 1 < words.size(); ++i) {
+        name += " " + words[i];
+    }
+    return true;
+}
+
 static void handleAdd(Scheduler& s, std::istringstream& in) {
-     std::vector<std::string> words;
-     std::string w;
-     while (in >> w) {
-	words.push_back(w);
-     }
-     if (words.size() < 2) {
-	std::cout << "Usage: ADD <name> <priority>\n";
-	return;
-     }
+    std::string name;
+    int priority = 0;
+    if (!readNameAndPriority(in, "ADD <name> <priority>", name, priority)) {
+        return;
+    }
+    s.add(name, priority);
+    std::cout << "Added: " << name << " (priority " << priority << ")\n";
+}
 
-     std::istringstream num(words.back());
-     int priority = 0;
-     char extra;
-     if (!(num >> priority) || (num >> extra)) {
-	std::cout << "Priority must be a whole number, like: ADD fix bug 1\n";
-	return;
-     }
-
-     std::string name = words[0];
-     for (std::size_t i = 1; i + 1 < words.size(); ++i) {
-	 name += " " + words[i];
-     }
-     s.add(name, priority);
-     std::cout << "Added: " << name << " (priority " << priority << ")\n";
+static void handleDelay(Scheduler& s, std::istringstream& in) {
+    std::string name;
+    int priority = 0;
+    if (!readNameAndPriority(in, "DELAY <name> <newPriority>", name, priority)) {
+        return;
+    }
+    int oldPriority = 0;
+    if (s.delay(name, priority, oldPriority)) {
+        std::cout << "Changed: " << name << " priority " << oldPriority
+                  << " -> " << priority << "\n";
+    } else {
+        std::cout << "No waiting task named \"" << name << "\".\n";
+    }
 }
 
 static void handleNext(Scheduler& s) {
@@ -93,7 +119,7 @@ static void handleList(const Scheduler& s) {
 
 static void runScheduler() {
     Scheduler scheduler;
-    std::cout << "Task scheduler. Commands: ADD <name> <priority>, NEXT, LIST, QUIT\n";
+    std::cout << "Task scheduler. Commands: ADD <name> <priority>, DELAY <name> <newPriority>, NEXT, LIST, CHECK,  QUIT\n";
 
     std::string line;
     std::cout << "> ";
@@ -104,6 +130,8 @@ static void runScheduler() {
 
 	if (command == "ADD") {
 	    handleAdd(scheduler, in);
+	} else if (command == "DELAY") {
+	    handleDelay(scheduler, in);
 	} else if (command == "NEXT") {
 	    handleNext(scheduler);
 	} else if (command == "LIST") {

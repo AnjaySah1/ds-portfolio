@@ -8,6 +8,9 @@ NEXT
 NEXT
 LIST
 ADD email team 2
+DELAY email team 0
+DELAY nobody 1
+LIST
 NEXT
 NEXT
 NEXT

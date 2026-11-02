@@ -79,7 +79,36 @@ public:
 	return tasks;
      }
 
-     // Checks the whole remaining order of my heao against a copy of the STL queue, without removing anything.
+     // DELAY: changes the priority of a waiting task and puts it where it belongs. Returns false (and changes nothing) if no waiting task has that name.
+     // If several tasks share the name, the one that would run first is changed. The task keeps the number it got when it was added, so it still wins ties against tasks added after it.
+     // MinHeap can't search for an item or move one in place, so this takes all the tasks out in order, changes the one, and builds the heap again. The STL queue has no change-priority either, so it is rebuilt the same way. That is O(n log n). A heap that also tracked where each item sits could do it in O(log n).
+     // Checks the whole remaining order of my heap against a copy of the STL queue, without removing anything.
+
+     bool delay(const std::string& name, int newPriority, int& oldPriority) {
+        std::vector<Task> tasks = list();
+        std::size_t found = tasks.size();
+        for (std::size_t i = 0; i < tasks.size(); ++i) {
+            if (tasks[i].name == name) {
+                found = i;
+                break;
+            }
+        }
+        if (found == tasks.size()) {
+            return false;
+        }
+
+        oldPriority = tasks[found].priority;
+        tasks[found].priority = newPriority;
+
+        heap_ = MinHeap<Task>();
+        stl_ = StlQueue();
+        for (std::size_t i = 0; i < tasks.size(); ++i) {
+            heap_.insert(tasks[i]);
+            stl_.push(tasks[i]);
+        }
+        return true;
+     }
+
      bool matchesStl() const {
 	std::vector<Task> mine = list();
 	StlQueue copy  = stl_;
