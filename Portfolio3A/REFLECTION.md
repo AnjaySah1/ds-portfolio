@@ -14,4 +14,4 @@ The test file has 79 checks. One check initially failed "both drain as 1..20", a
 
 I also made a mistake with .gitignore. I used paths that started with Portfolio3A/ from inside that folder, so they matched nothing. Changing them to /portfolio3a and /Portfolio3A fixed it.
 
-In the end all 79 checks pass, it compiles with no warnings, and a fresh clone from GitHub builds and runs. The table only grows, and the insert that triggers a rehash is slow.
+In the end all 79 checks pass, it compiles with no warnings, and a fresh clone from GitHub builds and runs. Testing rehasing with only four buckets and checking every key right after the table grew was especially useful. It let me check that the entries moved to the correct buckets without having to inspect a large table.Next time, I would write a small test like this for any structure that resizes before moving on to larger tests.
