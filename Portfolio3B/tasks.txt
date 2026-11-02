@@ -1,0 +1,15 @@
+ADD write report 3
+ADD fix bug 1
+ADD review code 2
+ADD deploy 1
+LIST
+CHECK
+NEXT
+NEXT
+LIST
+ADD email team 2
+NEXT
+NEXT
+NEXT
+NEXT
+QUIT

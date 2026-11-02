@@ -16,11 +16,10 @@
 #include <vector>
 
 #include "Scheduler.h"
+#include "Tests.h"
 #include "WordFreq.h"
 
-// -----------------------------------------------------
-// Task scheduler
-// ----------------------------------------------------
+//------------------------ Task scheduler-----------------
 
 static void printTask(const Task& t) {
     std::cout << t.name << " (priority " << t.priority << ")";
@@ -162,11 +161,17 @@ int main(int argc, char* argv[]) {
 	runScheduler();
 	return 0;
     }
+
+    if (argc == 2 && std::string(argv[1]) == "test") {
+        return runSelfTests();
+    }
+
     if (argc == 3 && std::string(argv[1]) == "words") {
 	return runWords(argv[2]);
     }
     std::cout << "Usage:\n"
 	      << " " << argv[0] << "		     task scheduler (type commands)\n"
-	      << " " << argv[0] << " words <file>    word frequency counter\n";
+	      << " " << argv[0] << " words <file>    word frequency counter\n"
+	      << " " << argv[0] << " test            run the self-tests\n";
     return 1;
 }
