@@ -98,7 +98,7 @@ inline void testScheduler(TestReport& t) {
 	t.check("equal priorities come out first-added first", ok);
       }
 
-    t.section("Scheduler: List does not remove anything");
+    t.section("Scheduler: LIST does not remove anything");
     {
 	Scheduler s;
 	s.add("w", 3);
