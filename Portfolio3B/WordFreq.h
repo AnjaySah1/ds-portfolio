@@ -203,7 +203,7 @@ inline bool crossCheckWords(WordCounter& counter,
 	 << reference.size() << " words checked, " << (mismatches + extra)
 	 << " discrepancies)\n";
      out << "  Top 10 matches:       " << (topOk ? "PASS" : "FAIL") << "\n";
-     out << "  Overall:		     " << (ok ? "PASS" : "FAIL") << "\n";
+     out << "  Overall:              " << (ok ? "PASS" : "FAIL") << "\n";
      return ok;
 }
 

@@ -96,9 +96,9 @@ static void handleCheck(const Scheduler& s) {
 
 static void printSummary(const Scheduler& s) {
     std::cout << "\nSTL cross-check summary\n";
-    std::cout << " NEXT result checked: " << s.nextChecks() << "\n";
-    std::cout << " Mismatches:          " << s.nextMismatches() << "\n";
-    std::cout << " Waiting tasks order: " << (s.matchesStl() ? "PASS" : "FAIL") << "\n";
+    std::cout << "  NEXT results checked: " << s.nextChecks() << "\n";
+    std::cout << "  Mismatches:           " << s.nextMismatches() << "\n";
+    std::cout << "  Waiting tasks order:  " << (s.matchesStl() ? "PASS" : "FAIL") << "\n";
     bool ok = (s.nextMismatches() == 0 && s.matchesStl());
     std::cout << "  Overall:              " << (ok ? "PASS" : "FAIL") << "\n";
 }
@@ -119,7 +119,7 @@ static void handleList(const Scheduler& s) {
 
 static void runScheduler() {
     Scheduler scheduler;
-    std::cout << "Task scheduler. Commands: ADD <name> <priority>, DELAY <name> <newPriority>, NEXT, LIST, CHECK,  QUIT\n";
+    std::cout << "Task scheduler. Commands: ADD <name> <priority>, DELAY <name> <newPriority>, NEXT, LIST, CHECK, QUIT\n";
 
     std::string line;
     std::cout << "> ";
