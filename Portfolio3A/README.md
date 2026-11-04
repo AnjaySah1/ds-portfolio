@@ -1,18 +1,18 @@
 # Portfolio 3A: Min-Heap and HashTable
 
-This part has two data structures I built from scratch: a min-heap and a hash table.Both are templates, so each one is just a header file. `main.cpp` tests them.
+This part has two data structures I built from scratch: a min-heap and a hash table. Both are templates, so each one is just a header file. `main.cpp` tests them.
 
 ## MinHeap
 
 `MinHeap<T>` stores its items in a `std::vector<T>`. The smallest item is always at index 0. For an item at index `i`, the parent is at `(i - 1) / 2` and the children are at `2i + 1` and `2i + 2`.
 
-- `insert` puts the new item at the end moves it up with `heapifyUp`.
+- `insert` puts the new item at the end and moves it up with `heapifyUp`.
 - `extractMin` takes the item at the root, moves the last item to the root, and moves it down with `heapifyDown`.
-- `peek` , `size`, and `isEmpty` do what the names say.
+- `peek`, `size`, and `isEmpty` do what the names say.
 - `peek` and `extractMin` throw an error if the heap is empty.
 - I also added `isValid`, which checks the heap order. I use it in the tests.
 
-## Hashtable
+## HashTable
 
 `HashTable<K, V>` uses separate chaining. It is a vector of buckets, and each bucket is a linked list (I used `std::list`) of key/value pairs.
 
@@ -31,11 +31,11 @@ Example: a table with 4 buckets can hold 3 items (exactly 0.75). The 4th item ma
 
 For strings, I start with 5381. Then for each character I do `hash = hash * 131 + character`. Since it multiplies each time, the order of the letters matters, so "cat" and "act" get different hashes.
 
-I used 131 and not 33 (the number djb2 normally uses). My table starts at 8 buckets and doubles each time, so the bucket count is a power of two unless I pick a different starting size. With 33 and 32 buckets or fewer, anagrams like "cat", "act", and "tac" land in the same bucket, because 33 is one more than a power of two. With 131 they spread out. Different strings can still collide and separate chaining is what handles that.
+I used 131 and not 33 (the number djb2 normally uses). My table starts at 8 buckets and doubles each time, so the bucket count is a power of two unless I pick a different starting size. With 33 and 32 buckets or fewer, anagrams like "cat", "act", and "tac" land in the same bucket, because 33 is one more than a power of two. With 131 they spread out. Different strings can still collide, and separate chaining is what handles that.
 
 Integers just hash to themselves. Any other key type uses `std::hash`.
 
-## How to complie on ludwig.mcs.uvawise.edu
+## How to compile on ludwig.mcs.uvawise.edu
 
 	make
 	./portfolio3a

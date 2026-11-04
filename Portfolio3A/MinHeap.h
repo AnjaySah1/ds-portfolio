@@ -15,16 +15,16 @@
 template <typename T>
 class MinHeap {
 public:
-    // Added this at the end,then bubble up untill the heap rule holds.
+    // Added the value at the end, then bubble it up until the heap rule holds.
     void insert(const T& value) {
         data_.push_back(value);
 	heapifyUp(data_.size() - 1);
     }
     // Remove and return the smallest value.
-    // Move the last iten to the root, then sink it back down.
+    // Move the last item to the root, then sink it back down.
     T extractMin() {
 	if (data_.empty()) {
-	    throw std::underflow_error("MinHeap::extractMin on an epty heap");
+	    throw std::underflow_error("MinHeap::extractMin on an empty heap");
 	}
 	T smallest = data_.front();
 	data_.front() = data_.back();

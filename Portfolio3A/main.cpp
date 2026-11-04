@@ -25,7 +25,7 @@ static void section(const std::string& title) {
     std::cout << "\n== " << title << " ==\n";
 }
 
-// A custom  type so the heap is tested on more then ints and strings.
+// A custom type so the heap is tested on more than ints and strings.
 struct Task {
     int priority;
     std::string name;
@@ -46,7 +46,7 @@ static void testMinHeap() {
     check("new heap size is 0", h.size() == 0);
 
     bool threw = false;
-    try { h.extractMin(); } catch (const std::underflow_error&) {threw = true; }
+    try { h.extractMin(); } catch (const std::underflow_error&) { threw = true; }
     check("extractMin on empty throws", threw);
 
     threw = false;
@@ -55,17 +55,17 @@ static void testMinHeap() {
 
     section("MinHeap: insert, peek, size");
     h.insert(5);
-    check("single insert: peek is 5", h.peek() ==5);
+    check("single insert: peek is 5", h.peek() == 5);
     h.insert(3);
     check("insert smaller: peek is 3", h.peek() == 3);
     h.insert(8);
     h.insert(1);
     h.insert(9);
-    check("peek is 1 after more inserts" , h.peek() == 1);
+    check("peek is 1 after more inserts", h.peek() == 1);
     check("size is 5", h.size() == 5);
     check("not empty", !h.isEmpty());
     check("peek does not remove", h.size() == 5 && h.peek() == 1);
-    check("heap rule hold", h.isValid());
+    check("heap rule holds", h.isValid());
 
     section("MinHeap: extractMin order");
     std::vector<int> out;
@@ -163,7 +163,7 @@ static void testHashTable() {
     check("find on empty returns nullptr", t.find("nothing") == nullptr);
     check("remove on empty returns false", !t.remove("removing"));
 
-    section("HashTable: insert and find(string keys)");
+    section("HashTable: insert and find (string keys)");
     check("insert apple is new", t.insert("apple", 1));
     check("insert banana is new", t.insert("banana", 2));
     check("insert cherry is new", t.insert("cherry", 3));
@@ -178,13 +178,13 @@ static void testHashTable() {
     check("size is still 3", t.size() == 3);
     check("apple now 100", *t.find("apple") == 100);
 
-    section("Hashtable: find lets you change the value");
+    section("HashTable: find lets you change the value");
     int* p = t.find("banana");
     if (p) *p = 222;
     check("banana changed to 222", *t.find("banana") == 222);
 
     section("HashTable: remove");
-    check("remove banana return true", t.remove("banana"));
+    check("remove banana returns true", t.remove("banana"));
     check("banana is gone", t.find("banana") == nullptr);
     check("size is 2", t.size() == 2);
     check("remove banana again returns false", !t.remove("banana"));
@@ -197,7 +197,7 @@ static void testHashTable() {
     r.insert("c", 3);
     check("3 of 4 buckets (0.75) does not rehash", r.bucketCount() == 4);
     r.insert("d", 4);
-    check("4th insert (1.0 > 0.75) double to 8", r.bucketCount() == 8);
+    check("4th insert (1.0 > 0.75) doubles to 8", r.bucketCount() == 8);
     check("load factor now 0.5", r.loadFactor() == 0.5);
     check("all 4 keys survive the rehash",
           r.find("a") && r.find("b") && r.find("c") && r.find("d") &&
@@ -226,7 +226,7 @@ static void testHashTable() {
     }
     check("only odd keys remain", ok);
 
-    section("Hashtable: int keys");
+    section("HashTable: int keys");
     HashTable<int, std::string> n;
     n.insert(42, "answer");
     n.insert(7, "lucky");
@@ -236,7 +236,7 @@ static void testHashTable() {
     check("remove 7", n.remove(7) && n.find(7) == nullptr);
 
 
-    section("Hashtable: all keys in one chain (ConstantHash)");
+    section("HashTable: all keys in one chain (ConstantHash)");
     HashTable<int, int, ConstantHash> c;
     for (int i = 1; i <= 5; ++i) c.insert(i, i * 10);
     check("size is 5", c.size() == 5);
@@ -257,7 +257,7 @@ static void testHashTable() {
 }
 
 static void hashDemo() {
-     section("String has demo");
+     section("String hash demo");
      CustomHash<std::string> h;
      const char* words[] = {"cat", "act", "tac", "Cat", "hello", ""};
      for (int i = 0; i < 6; ++i) {
@@ -286,7 +286,7 @@ int main() {
 
     std::cout << "\n-------------------------------\n";
     std::cout << "Passed: " << passed << " Failed: " << failed << "\n";
-    std::cout << (failed == 0 ? "All tests passed.\n" : "Some test Failed.\n");
+    std::cout << (failed == 0 ? "All tests passed.\n" : "Some test FAILED.\n");
     return failed == 0 ? 0 : 1;
 }
 

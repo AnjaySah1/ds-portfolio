@@ -47,7 +47,7 @@ public:
     explicit HashTable(std::size_t initialBuckets = 8)
 	: buckets_(initialBuckets == 0 ? 1 : initialBuckets), count_(0) {}
 
-    // Add a pair. If the key already exits, replace its value.
+    // Add a pair. If the key already exists, replace its value.
     // Returns true for a new key, false for an update.
     bool insert(const K& key, const V& value) {
 	std::list<Entry>& bucket = buckets_[indexFor(key)];
@@ -66,7 +66,7 @@ public:
 	return true;
      }
 
-     // Length of the longest chain. If the lenght of number is big then it is a weak hash.
+     // Length of the longest chain. A big number means a weak hash.
      std::size_t longestChain() const {
 	std::size_t longest = 0;
 	for (std::size_t i = 0; i < buckets_.size(); ++i) {
@@ -109,7 +109,7 @@ public:
       bool isEmpty() const { return count_ == 0; }
       std::size_t bucketCount() const { return buckets_.size(); }
 
-      //Rehash when the load factor goes above this value.
+      // Rehash when the load factor goes above this value.
       static double maxLoadFactor() { return 0.75; }
 
       // Entries divided by buckets.
@@ -134,13 +134,13 @@ private:
      }
 
      // Creating a bigger bucket array and insert all entries again.
-     //Entries cannot be copied to the same positions because their bucket indexes depend on the number of buckets.
+     // Entries cannot be copied to the same positions because their bucket indexes depend on the number of buckets.
 
      void rehash(std::size_t newBucketCount) {
 	std::vector<std::list<Entry> > newBuckets(newBucketCount);
 	for (std::size_t i = 0; i < buckets_.size(); ++i) {
 	     for (typename std::list<Entry>::iterator it = buckets_[i].begin();
-		it !=buckets_[i].end(); ++it) {
+		it != buckets_[i].end(); ++it) {
 		std::size_t index = hash_(it->key) % newBucketCount;
 		newBuckets[index].push_back(*it);
 	     }
